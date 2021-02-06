@@ -39,8 +39,8 @@ export default {
     return {
       search: '',
       headers: [
-        { text: 'Фамилия И.О.', value: 'name' },
         { text: 'Адрес', value: 'address' },
+        { text: 'Фамилия И.О.', value: 'name' },
         { text: 'Дата', value: 'dateOfPayments' },
         { text: 'Сумма', value: 'summ' },
         { text: 'Операции', value: 'actions' },

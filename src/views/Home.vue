@@ -1,6 +1,9 @@
 <template>
   <div class="home text-center ">
-    <h1>Сводный баланс (расход-доход)</h1>
+    <h1>
+      Сводный баланс (доход - расход) :
+      <span :class="saldo >= 0 ? 'norm' : 'problem'">{{ saldo }}</span>
+    </h1>
 
     <v-row justify="space-around">
       <v-col cols="4">
@@ -153,13 +156,14 @@ export default {
     ],
     yearsData: [],
     headers: [
-      { text: 'Месяц', value: 'month' },
+      { text: 'Период', value: 'month' },
       { text: 'Доход', value: 'income' },
       { text: 'Расход', value: 'consumption' },
       { text: 'Остаток', value: 'remains', sortable: false },
       { text: '', value: 'actions', sortable: false },
     ],
     year_data: [],
+    saldo: 0,
   }),
   async mounted() {
     let expenses = await this.$apollo
@@ -195,10 +199,12 @@ export default {
     let years = Object.keys(paymentsByYears).concat(Object.keys(expencesByYears))
     years = [...new Set(years)].sort()
 
-    for (var i = 0; i < years.length; i++) {
-      var year = years[i]
-      var payment = paymentsByYears[year] || 0
-      var expence = expencesByYears[year] || 0
+    for (let i = 0; i < years.length; i++) {
+      let year = years[i]
+      let payment = paymentsByYears[year] || 0
+      let expence = expencesByYears[year] || 0
+      let temp = +payment - +expence
+      this.saldo += temp
       let item = {
         year: year,
         yearIncome: payment,

@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="font-wight-bold">Жители нашей улицы </span>
+      <span class="font-wight-bold">Домовладения улицы Малиновая</span>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
