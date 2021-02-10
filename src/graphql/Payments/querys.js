@@ -8,10 +8,16 @@ export const ALLPAYMENTS = gql`
       id
       dateOfPayments
       summ
+      quarter
       citizenId {
         id
         name
-        address
+      }
+      houseId {
+        id
+        homenumber
+        street
+        sity
       }
     }
   }
@@ -30,30 +36,68 @@ export const DELPAYMENT = gql`
 `
 
 export const EDITPAYMENT = gql`
-  mutation($id: ID!, $dateOfPayments: String!, $summ: String!, $citizenId: ID!) {
-    editPayment(id: $id, dateOfPayments: $dateOfPayments, summ: $summ, citizenId: $citizenId) {
+  mutation(
+    $id: ID!
+    $dateOfPayments: String!
+    $summ: String!
+    $quarter: String!
+    $citizenId: ID!
+    $houseId: ID!
+  ) {
+    editPayment(
+      id: $id
+      dateOfPayments: $dateOfPayments
+      summ: $summ
+      quarter: $quarter
+      citizenId: $citizenId
+      houseId: $houseId
+    ) {
       id
       dateOfPayments
       summ
+      quarter
       citizenId {
         id
         name
-        address
+      }
+      houseId {
+        id
+        housenumber
+        street
+        sity
       }
     }
   }
 `
 
 export const ADDPAYMENT = gql`
-  mutation($dateOfPayments: String!, $summ: String!, $citizenId: ID!) {
-    addPayment(dateOfPayments: $dateOfPayments, summ: $summ, citizenId: $citizenId) {
+  mutation(
+    $dateOfPayments: String!
+    $summ: String!
+    $quarter: String!
+    $citizenId: ID!
+    $houseId: ID!
+  ) {
+    addPayment(
+      dateOfPayments: $dateOfPayments
+      summ: $summ
+      quarter: $quarter
+      citizenId: $citizenId
+      houseId: $houseId
+    ) {
       id
       dateOfPayments
       summ
+      quarter
       citizenId {
         id
         name
-        address
+      }
+      houseId {
+        id
+        housenumber
+        street
+        sity
       }
     }
   }

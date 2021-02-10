@@ -7,33 +7,16 @@ export const ALLCITIZENS = gql`
     getAllCitizen {
       id
       name
-      address
+      birthday
       phone
-    }
-  }
-`
-
-export const GETCITIZENPAYS = gql`
-  query($id: ID!) {
-    getCitizenWithPays(id: $id) {
       payments {
-        id
-        dateOfPayments
         summ
+        dateOfPayments
       }
-    }
-  }
-`
-export const GETCITIZEN = gql`
-  query($id: ID!) {
-    getPayWithCitizen(id: $id) {
-      id
-      dateOfPayments
-      summ
-      citizenId {
-        id
-        name
-        address
+      houseId {
+        homenumber
+        street
+        sity
       }
     }
   }
@@ -43,7 +26,7 @@ export const GETCITIZENBYID = gql`
   query($id: ID!) {
     getCitizen(id: $id) {
       name
-      address
+      birthday
       phone
     }
   }
@@ -52,22 +35,22 @@ export const GETCITIZENBYID = gql`
 // MUTATIONS *********
 
 export const EDITCITIZENBYID = gql`
-  mutation($id: ID!, $name: String, $address: String, $phone: String) {
-    editCitizen(id: $id, name: $name, address: $address, phone: $phone) {
+  mutation($id: ID!, $name: String, $phone: String, $birthday: String, $houseId: ID!) {
+    editCitizen(id: $id, name: $name, phone: $phone, birthday: $birthday, houseId: $houseId) {
       id
       name
-      address
+      birthday
       phone
     }
   }
 `
 
 export const ADDCITIZEN = gql`
-  mutation($name: String, $address: String, $phone: String) {
-    addCitizen(name: $name, address: $address, phone: $phone) {
+  mutation($name: String, $phone: String, $birthday: String, $houseId: ID!) {
+    addCitizen(name: $name, phone: $phone, birthday: $birthday, houseId: $houseId) {
       id
       name
-      address
+      birthday
       phone
     }
   }
@@ -77,8 +60,6 @@ export const DELCITIZENBYID = gql`
     delCitizen(id: $id) {
       id
       name
-      address
-      phone
     }
   }
 `

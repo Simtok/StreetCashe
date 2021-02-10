@@ -29,7 +29,6 @@
 </template>
 
 <script>
-// import gql from 'graphql-tag'
 import DialogModal from '@/components/DialogModal.vue'
 import { ALLPAYMENTS, DELPAYMENT } from '@/graphql/Payments/querys'
 
@@ -46,7 +45,6 @@ export default {
         { text: 'Операции', value: 'actions' },
       ],
       peoples: [],
-      temp: {},
     }
   },
   // apollo: {
@@ -68,21 +66,19 @@ export default {
   // },
 
   async mounted() {
-    let temp = await this.$apollo.query({
+    let mass = await this.$apollo.query({
       query: ALLPAYMENTS,
-      update(data) {
-        return data.getAllPayments
-      },
     })
-    this.peoples = temp.data.getAllPayments.map(el => {
-      return {
+    mass.data.getAllPayments.map(el => {
+      let temp = {
         id: el.id,
         summ: el.summ,
         dateOfPayments: el.dateOfPayments,
         name: el.citizenId.name,
-        address: el.citizenId.address,
+        address: el.houseId.sity + ', ул. ' + el.houseId.street + ', дом. ' + el.houseId.homenumber,
         citizenId: el.citizenId.id,
       }
+      this.peoples.push(temp)
     })
   },
   methods: {

@@ -50,7 +50,7 @@
 <script>
 // import format from 'date-fns/format'
 import { ALLPAYMENTS, EDITPAYMENT } from '@/graphql/Payments/querys'
-import { GETCITIZEN, ALLCITIZENS } from '../graphql/Citizens/querys'
+import { GETCITIZENBYID, ALLCITIZENS } from '../graphql/Citizens/querys'
 
 export default {
   props: ['id'],
@@ -68,7 +68,7 @@ export default {
 
     let temp = await this.$apollo
       .query({
-        query: GETCITIZEN,
+        query: GETCITIZENBYID,
         variables: {
           id: myId,
         },

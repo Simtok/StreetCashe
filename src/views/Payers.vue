@@ -30,41 +30,8 @@
 
 <script>
 import DialogModal from '../components/DialogModal'
-// import gql from 'graphql-tag'
-import { DELCITIZENBYID, ALLCITIZENS, GETCITIZENPAYS } from '../graphql/Citizens/querys'
+import { DELCITIZENBYID, ALLCITIZENS, GETCITIZENBYID } from '../graphql/Citizens/querys'
 
-// export const DELCITIZENBYID = gql`
-//   mutation($id: ID!) {
-//     delCitizen(id: $id) {
-//       id
-//       name
-//       address
-//       phone
-//     }
-//   }
-// `
-// export const ALLCITIZENS = gql`
-//   query {
-//     getAllCitizen {
-//       id
-//       name
-//       address
-//       phone
-//     }
-//   }
-// `
-
-// let GETCITIZENPAYS = gql`
-//   query($id: ID!) {
-//     getCitizenWithPays(id: $id) {
-//       payments {
-//         id
-//         dateOfPayments
-//         summ
-//       }
-//     }
-//   }
-// `
 export default {
   data() {
     return {
@@ -77,6 +44,7 @@ export default {
         },
         { text: 'Адрес', value: 'address' },
         { text: 'Телефон', value: 'phone' },
+        { text: 'Дата рождения', value: 'birthday' },
         { text: 'Операции', value: 'actions' },
       ],
     }
@@ -94,7 +62,7 @@ export default {
     async deleteCitizen(el) {
       let payId = await this.$apollo
         .query({
-          query: GETCITIZENPAYS,
+          query: GETCITIZENBYID,
           variables: {
             id: el,
           },
@@ -127,7 +95,14 @@ export default {
     massiv: {
       query: ALLCITIZENS,
       update(data) {
-        let result = data.getAllCitizen
+        let result = data.getAllCitizen.map(val => {
+          return {
+            name: val.name,
+            address: val.houseId.address + ', дом № ' + val.houseId.homenumber,
+            birthday: val.birthday,
+            phone: val.phone,
+          }
+        })
         return result
       },
     },

@@ -11,7 +11,7 @@
           <v-card-title>
             <span class="font-wight-bold">Сводная информация по годам.</span></v-card-title
           >
-          <v-data-table :headers="leftHeaders" :items="yearsData">
+          <v-data-table :headers="summaryHeaders" :items="yearsData">
             <template #item.remains="{ item }">
               <span :class="item.yearIncome > item.yearConsumption ? 'norm' : 'problem'">
                 {{ (item.yearIncome - item.yearConsumption).toFixed(2) }}
@@ -31,15 +31,8 @@
               >Сводная информация за {{ $store.getters.getYear }} год</span
             >
             <v-spacer></v-spacer>
-            <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Поиск"
-              single-line
-              hide-details
-            ></v-text-field>
           </v-card-title>
-          <v-data-table :headers="headers" :items="year_data" :search="search">
+          <v-data-table :headers="payHeader" :items="year_data">
             <template #item.month="{item}">
               {{ monthName[item.month] }}
             </template>
@@ -67,13 +60,35 @@ import mn from '@/utils/monthName'
 
 export default {
   name: 'Home',
+  data: () => ({
+    monthName: mn,
+    yearInfo: '',
+    myStore: '',
+    summaryHeaders: [
+      { text: 'Год', value: 'year' },
+      { text: 'Доход', value: 'yearIncome' },
+      { text: 'Расход', value: 'yearConsumption' },
+      { text: 'Остаток', value: 'remains', sortable: false },
+      { text: '', value: 'actions', sortable: false },
+    ],
+    yearsData: [],
+    payHeader: [
+      { text: 'Период', value: 'month' },
+      { text: 'Доход', value: 'income' },
+      { text: 'Расход', value: 'consumption' },
+      { text: 'Остаток', value: 'remains', sortable: false },
+      { text: '', value: 'actions', sortable: false },
+    ],
+    year_data: [],
+    saldo: 0,
+  }),
   methods: {
     showMonth(val) {
       this.$router.push(`/monthinfo/${val}`)
     },
-    get_item() {
-      return 'item.remains'
-    },
+    // get_item() {
+    //   return 'item.remains'
+    // },
     async onClickRow(data) {
       this.year_data.length = 0
       let year = ''
@@ -142,29 +157,6 @@ export default {
     },
   },
 
-  data: () => ({
-    monthName: mn,
-    yearInfo: '',
-    myStore: '',
-    search: '',
-    leftHeaders: [
-      { text: 'Год', value: 'year' },
-      { text: 'Доход', value: 'yearIncome' },
-      { text: 'Расход', value: 'yearConsumption' },
-      { text: 'Остаток', value: 'remains', sortable: false },
-      { text: '', value: 'actions', sortable: false },
-    ],
-    yearsData: [],
-    headers: [
-      { text: 'Период', value: 'month' },
-      { text: 'Доход', value: 'income' },
-      { text: 'Расход', value: 'consumption' },
-      { text: 'Остаток', value: 'remains', sortable: false },
-      { text: '', value: 'actions', sortable: false },
-    ],
-    year_data: [],
-    saldo: 0,
-  }),
   async mounted() {
     let expenses = await this.$apollo
       .query({
@@ -220,9 +212,9 @@ export default {
     this.onClickRow(this.$store.getters.getYear)
   },
   computed: {
-    mixData() {
-      return this.dataList
-    },
+    // mixData() {
+    //   return this.dataList
+    // },
   },
 
   // apollo: {
