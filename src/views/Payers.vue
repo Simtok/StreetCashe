@@ -30,7 +30,8 @@
 
 <script>
 import DialogModal from '../components/DialogModal'
-import { DELCITIZENBYID, ALLCITIZENS, GETCITIZENBYID } from '../graphql/Citizens/querys'
+import { GETCITIZENBYID, ALLCITIZENS } from '../graphql/Citizens/querys'
+// import { DELCITIZENBYID, ALLCITIZENS, GETCITIZENBYID } from '../graphql/Citizens/querys'
 
 export default {
   data() {
@@ -72,25 +73,27 @@ export default {
             return el.id
           }),
         )
-
-      if (payId.length > 0) {
-        alert('Удаление невозможно! Есть связанные данные!')
-        return
-      }
-
-      this.$apollo.mutate({
-        mutation: DELCITIZENBYID,
-        variables: {
-          id: el,
-        },
-        update: (cache, { data: { delCitizen } }) => {
-          let data = cache.readQuery({ query: ALLCITIZENS })
-          data.getAllCitizen = data.getAllCitizen.filter(elem => elem.id != delCitizen.id)
-          cache.writeQuery({ query: ALLCITIZENS, data })
-        },
-      })
+      console.log(payId)
     },
+    //   if (payId.length > 0) {
+    //     alert('Удаление невозможно! Есть связанные данные!')
+    //     return
+    //   }
+
+    //   this.$apollo.mutate({
+    //     mutation: DELCITIZENBYID,
+    //     variables: {
+    //       id: el,
+    //     },
+    //     update: (cache, { data: { delCitizen } }) => {
+    //       let data = cache.readQuery({ query: ALLCITIZENS })
+    //       data.getAllCitizen = data.getAllCitizen.filter(elem => elem.id != delCitizen.id)
+    //       cache.writeQuery({ query: ALLCITIZENS, data })
+    //     },
+    //   })
+    // },
   },
+
   apollo: {
     massiv: {
       query: ALLCITIZENS,
@@ -98,8 +101,12 @@ export default {
         let result = data.getAllCitizen.map(val => {
           return {
             name: val.name,
-            address: val.houseId.address + ', дом № ' + val.houseId.homenumber,
-            birthday: val.birthday,
+            address:
+              val.houseId.sity +
+              ', str. ' +
+              val.houseId.street +
+              ', дом № ' +
+              val.houseId.homenumber,
             phone: val.phone,
           }
         })

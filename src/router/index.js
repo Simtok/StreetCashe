@@ -91,6 +91,12 @@ const routes = [
     component: () => import('@/views/ShowMontsInfo'),
     props: true,
   },
+  {
+    path: '/test',
+    name: 'test',
+    meta: { layout: 'main', auth: true },
+    component: () => import('@/views/test'),
+  },
 ]
 
 const router = new VueRouter({

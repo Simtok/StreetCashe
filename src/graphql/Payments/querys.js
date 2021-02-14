@@ -23,6 +23,23 @@ export const ALLPAYMENTS = gql`
   }
 `
 
+export const GETPAYMENTBYID = gql`
+  query($id: ID!) {
+    getPayment(id: $id) {
+      dateOfPayments
+      summ
+      quarter
+      year
+      citizenId {
+        id
+      }
+      houseId {
+        id
+      }
+    }
+  }
+`
+
 // MUTATIONS *********
 
 export const DELPAYMENT = gql`
@@ -43,6 +60,7 @@ export const EDITPAYMENT = gql`
     $quarter: String!
     $citizenId: ID!
     $houseId: ID!
+    $year: Int!
   ) {
     editPayment(
       id: $id
@@ -51,20 +69,18 @@ export const EDITPAYMENT = gql`
       quarter: $quarter
       citizenId: $citizenId
       houseId: $houseId
+      year: $year
     ) {
       id
       dateOfPayments
       summ
       quarter
+      year
       citizenId {
         id
-        name
       }
       houseId {
         id
-        housenumber
-        street
-        sity
       }
     }
   }
@@ -77,6 +93,7 @@ export const ADDPAYMENT = gql`
     $quarter: String!
     $citizenId: ID!
     $houseId: ID!
+    $year: Int!
   ) {
     addPayment(
       dateOfPayments: $dateOfPayments
@@ -84,20 +101,18 @@ export const ADDPAYMENT = gql`
       quarter: $quarter
       citizenId: $citizenId
       houseId: $houseId
+      year: $year
     ) {
       id
       dateOfPayments
       summ
       quarter
+      year
       citizenId {
         id
-        name
       }
       houseId {
         id
-        housenumber
-        street
-        sity
       }
     }
   }

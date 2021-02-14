@@ -1,4 +1,4 @@
-export default function dataFilter(value, choise) {
+export default function dateFilter(value, choise) {
   let options = {}
   switch (choise) {
     case 'dateTime':

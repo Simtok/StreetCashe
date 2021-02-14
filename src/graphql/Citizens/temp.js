@@ -1,7 +1,3 @@
-import gql from 'graphql-tag'
-
-// QUERYS **********
-
 export const ALLCITIZENS = gql`
   query {
     getAllCitizen {
@@ -14,7 +10,6 @@ export const ALLCITIZENS = gql`
         dateOfPayments
       }
       houseId {
-        id
         homenumber
         street
         sity
