@@ -28,6 +28,9 @@ export const GETCITIZENBYID = gql`
       name
       birthday
       phone
+      houseId {
+        id
+      }
     }
   }
 `

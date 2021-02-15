@@ -9,6 +9,7 @@ export const ALLPAYMENTS = gql`
       dateOfPayments
       summ
       quarter
+      year
       citizenId {
         id
         name

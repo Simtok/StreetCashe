@@ -6,7 +6,7 @@
         <v-col cols="6">
           <v-row>
             <v-col>
-              <v-text-field label="Назначение расхода" v-model="massiv.name"></v-text-field>
+              <v-text-field label="Назначение расхода" v-model="name"></v-text-field>
               <v-menu
                 v-model="menu"
                 :close-on-content-click="false"
@@ -17,7 +17,7 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                    v-model="massiv.dateOfExpenditure"
+                    v-model="dateOfExpenditure"
                     label="Дата оплаты"
                     prepend-icon="mdi-calendar"
                     readonly
@@ -26,12 +26,14 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
-                  v-model="massiv.dateOfExpenditure"
+                  v-model="dateOfExpenditure"
                   @input="menu = false"
+                  locale="ru-RU"
+                  :first-day-of-week="1"
                 ></v-date-picker>
               </v-menu>
 
-              <v-text-field label="Сумма оплаты" v-model="massiv.summOfExpenditure"></v-text-field>
+              <v-text-field label="Сумма оплаты" v-model="summOfExpenditure"></v-text-field>
               <v-btn class="mr-4" @click="submit">Изменить</v-btn>
               <v-btn @click="clear">Отмена</v-btn>
             </v-col>
@@ -48,31 +50,40 @@ import { GETEXPENSEBYID, EDITEXPENSEBYID } from '@/graphql/Expenses/querys'
 export default {
   props: ['id'],
   data: () => ({
-    massiv: { name: '', dateOfExpenditure: '', summOfExpenditure: '' },
+    name: '',
+    summOfExpenditure: '',
+    dateOfExpenditure: '',
     menu: false,
     modal: false,
   }),
   async mounted() {
-    let myId = this.id
-    this.massiv = await this.$apollo
+    await this.$apollo
       .query({
         query: GETEXPENSEBYID,
         variables: {
-          id: myId,
+          id: this.id,
         },
+        fetchPolicy: 'network-only',
       })
-      .then(res => res.data.getExpense)
+      .then(res => {
+        this.setFields(res.data.getExpense)
+      })
   },
   methods: {
+    setFields(val) {
+      this.name = val.name
+      this.summOfExpenditure = val.summOfExpenditure
+      this.dateOfExpenditure = val.dateOfExpenditure
+    },
     clear() {
       return this.$router.push('/expenses')
     },
 
     submit() {
       let myId = this.id
-      let name = this.massiv.name
-      let date = this.massiv.dateOfExpenditure
-      let summ = this.massiv.summOfExpenditure
+      let name = this.name
+      let date = this.dateOfExpenditure
+      let summ = this.summOfExpenditure
 
       this.$apollo.mutate({
         mutation: EDITEXPENSEBYID,
@@ -83,15 +94,6 @@ export default {
           summOfExpenditure: summ,
         },
         update: () => {
-          // let data = cache.readQuery({ query: ALLEXPENSES })
-          // console.log('Data before - ', data)
-          // data.getAllExpense.map(elem => {
-          //   if (elem.id === editExpense.id) {
-          //     elem = editExpense
-          //   }
-          // })
-          // console.log('Data after - ', data)
-          // cache.writeQuery({ query: ALLEXPENSES, data })
           return this.$router.push('/expenses')
         },
       })

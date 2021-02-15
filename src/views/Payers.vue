@@ -54,6 +54,12 @@ export default {
     DialogModal,
   },
   methods: {
+    formatDate(date) {
+      if (!date) return null
+
+      const [year, month, day] = date.split('-')
+      return `${day}.${month}.${year}`
+    },
     editPerson(val) {
       this.$router.push(`/EditPerson/${val}`)
     },
@@ -108,6 +114,8 @@ export default {
               ', дом № ' +
               val.houseId.homenumber,
             phone: val.phone,
+            birthday: this.formatDate(val.birthday),
+            id: val.id,
           }
         })
         return result

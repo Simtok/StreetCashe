@@ -40,6 +40,7 @@ export default {
       headers: [
         { text: 'Адрес', value: 'address' },
         { text: 'Фамилия И.О.', value: 'name' },
+        { text: 'Период год/кв', value: 'period' },
         { text: 'Дата', value: 'dateOfPayments' },
         { text: 'Сумма', value: 'summ' },
         { text: 'Операции', value: 'actions' },
@@ -47,24 +48,6 @@ export default {
       peoples: [],
     }
   },
-  // apollo: {
-  //   peoples: {
-  //     query: ALLPAYMENTS,
-  //     update({ getAllPayments }) {
-  //       return getAllPayments.map(el => {
-  //         return {
-  //           id: el.id,
-  //           summ: el.summ,
-  //           dateOfPayments: el.dateOfPayments,
-  //           name: el.citizenId.name,
-  //           address: el.citizenId.address,
-  //           citizenId: el.citizenId.id,
-  //         }
-  //       })
-  //     },
-  //   },
-  // },
-
   async mounted() {
     let mass = await this.$apollo.query({
       query: ALLPAYMENTS,
@@ -74,6 +57,7 @@ export default {
         id: el.id,
         summ: el.summ,
         dateOfPayments: el.dateOfPayments,
+        period: el.year.toString() + ' / ' + el.quarter.trim().substr(0, 4) + '.',
         name: el.citizenId.name,
         address: el.houseId.sity + ', ул. ' + el.houseId.street + ', дом. ' + el.houseId.homenumber,
         citizenId: el.citizenId.id,

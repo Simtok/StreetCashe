@@ -46,7 +46,12 @@
                         class="px-4"
                       ></v-text-field>
                     </template>
-                    <v-date-picker v-model="dateOfPayments" @input="menu = false"></v-date-picker>
+                    <v-date-picker
+                      v-model="dateOfPayments"
+                      @input="menu = false"
+                      locale="ru-RU"
+                      :first-day-of-week="1"
+                    ></v-date-picker>
                   </v-menu>
                 </v-flex>
                 <v-flex>
@@ -71,7 +76,6 @@
 </template>
 
 <script>
-// import format from 'date-fns/format'
 import { ALLCITIZENS } from '@/graphql/Citizens/querys'
 import { ADDPAYMENT, ALLPAYMENTS } from '@/graphql/Payments/querys'
 import dateFilter from '@/filters/dateFilter'
@@ -103,7 +107,6 @@ export default {
     },
   },
   async mounted() {
-    // this.dateOfPayments = dateFilter(new Date(), 'date')
     for (let i = 2020; i <= 2030; i++) {
       this.yearValues.push(i)
     }

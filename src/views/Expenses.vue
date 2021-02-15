@@ -36,6 +36,7 @@ export default {
   components: { DialogModal },
   data() {
     return {
+      massiv: [],
       search: '',
       headers: [
         { text: 'Цель затрат', value: 'name' },
@@ -66,6 +67,13 @@ export default {
       })
     },
   },
+  // async mounted() {
+  //   this.massiv = await this.$apollo
+  //     .query({
+  //       query: ALLEXPENSES,
+  //     })
+  //     .then(res => res.data.getAllExpense)
+  // },
   apollo: {
     massiv: {
       query: ALLEXPENSES,

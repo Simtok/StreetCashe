@@ -25,7 +25,12 @@
                     v-on="on"
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="dateOfExpenditure" @input="menu = false"></v-date-picker>
+                <v-date-picker
+                  v-model="dateOfExpenditure"
+                  @input="menu = false"
+                  locale="ru-RU"
+                  :first-day-of-week="1"
+                ></v-date-picker>
               </v-menu>
               <v-text-field label="Сумма оплаты" v-model="summOfExpenditure"></v-text-field>
               <v-btn class="mr-4" @click="submit">Добавить</v-btn>
@@ -40,7 +45,6 @@
 
 <script>
 import { ADDEXPENSE, ALLEXPENSES } from '@/graphql/Expenses/querys'
-// import format from 'date-fns/format'
 
 export default {
   data: () => ({
@@ -50,11 +54,7 @@ export default {
     menu: false,
     modal: false,
   }),
-  // computed: {
-  //   formatedDate() {
-  //     return this.dateOfExpenditure ? format(this.dateOfExpenditure, 'd MMM yyyy') : ''
-  //   },
-  // },
+
   methods: {
     clear() {
       return this.$router.push('/expenses')

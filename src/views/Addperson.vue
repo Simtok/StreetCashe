@@ -16,8 +16,37 @@
                 persistent-hint
                 return-object
               ></v-select>
-              <v-text-field label="День рождения" v-model="birthday"></v-text-field>
-              <v-text-field label="Телефон" v-model="phone"></v-text-field>
+              <v-layout
+                ><v-flex>
+                  <v-menu
+                    v-model="menu"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="dateFormatted"
+                        label="День рождения"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        @blur="birthday = parseDate(dateFormatted)"
+                        v-on="on"
+                        class="pr-6"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="birthday"
+                      @input="menu = false"
+                      locale="ru-RU"
+                      :first-day-of-week="1"
+                    ></v-date-picker>
+                  </v-menu>
+                </v-flex>
+                <v-flex> <v-text-field label="Телефон" v-model="phone"></v-text-field> </v-flex
+              ></v-layout>
               <v-btn class="mr-4" @click="submit">Добавить</v-btn>
               <v-btn @click="clear">Отмена</v-btn>
             </v-col>
@@ -33,13 +62,26 @@ import { ALLCITIZENS, ADDCITIZEN } from '@/graphql/Citizens/querys'
 import { ALLHOUSES } from '@/graphql/Houses/querys'
 
 export default {
-  data: () => ({
+  data: vm => ({
     name: '',
     phone: '',
-    birthday: '',
+    birthday: new Date().toISOString().substr(0, 10),
+    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
     selected: { id: '' },
     items: [],
+    menu: false,
   }),
+  computed: {
+    computedDateFormatted() {
+      return this.formatDate(this.dateOfPayments)
+    },
+  },
+
+  watch: {
+    dateOfPayments() {
+      this.dateFormatted = this.formatDate(this.dateOfPayments)
+    },
+  },
   async mounted() {
     this.items = await this.$apollo
       .query({
@@ -52,6 +94,18 @@ export default {
       )
   },
   methods: {
+    formatDate(date) {
+      if (!date) return null
+
+      const [year, month, day] = date.split('-')
+      return `${day}.${month}.${year}`
+    },
+    parseDate(date) {
+      if (!date) return null
+
+      const [day, month, year] = date.split('.')
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    },
     clear() {
       return this.$router.push('/payers')
     },

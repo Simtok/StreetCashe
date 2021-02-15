@@ -46,7 +46,12 @@
                         class="px-4"
                       ></v-text-field>
                     </template>
-                    <v-date-picker v-model="dateOfPayments" @input="menu = false"></v-date-picker>
+                    <v-date-picker
+                      v-model="dateOfPayments"
+                      @input="menu = false"
+                      locale="ru-RU"
+                      :first-day-of-week="1"
+                    ></v-date-picker>
                   </v-menu>
                 </v-flex>
                 <v-flex>
@@ -71,8 +76,7 @@
 </template>
 
 <script>
-// import format from 'date-fns/format'
-import { ALLPAYMENTS, EDITPAYMENT, GETPAYMENTBYID } from '@/graphql/Payments/querys'
+import { EDITPAYMENT, GETPAYMENTBYID } from '@/graphql/Payments/querys'
 import { ALLCITIZENS } from '../graphql/Citizens/querys'
 
 export default {
@@ -105,14 +109,14 @@ export default {
     for (let i = 2020; i <= 2030; i++) {
       this.yearValues.push(i)
     }
-    let myId = this.id
 
     let temp = await this.$apollo
       .query({
         query: GETPAYMENTBYID,
         variables: {
-          id: myId,
+          id: this.id,
         },
+        fetchPolicy: 'network-only',
       })
       .then(res => res.data.getPayment)
 
@@ -123,7 +127,6 @@ export default {
     this.selected.citizenId = temp.citizenId.id
     this.selected.houseId = temp.houseId.id
 
-    debugger
     this.items = await this.$apollo
       .query({
         query: ALLCITIZENS,
@@ -181,15 +184,7 @@ export default {
           citizenId: citId,
           houseId: houseId,
         },
-        update: (cache, { data: { editPayment } }) => {
-          let data = cache.readQuery({ query: ALLPAYMENTS })
-
-          data.getAllPayments.map(elem => {
-            if (elem.id === editPayment.id) {
-              elem = editPayment
-            }
-          })
-          cache.writeQuery({ query: ALLPAYMENTS, data })
+        update: () => {
           return this.$router.push('/payments')
         },
       })
