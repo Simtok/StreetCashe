@@ -17,12 +17,13 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                    v-model="dateOfExpenditure"
+                    v-model="dateFormatted"
                     label="Дата оплаты"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
                     v-on="on"
+                    @blur="dateOfExpenditure = parseDate(dateFormatted)"
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -46,16 +47,30 @@
 
 <script>
 import { GETEXPENSEBYID, EDITEXPENSEBYID } from '@/graphql/Expenses/querys'
+import dataUtils from '@/utils/formatDate'
 
 export default {
   props: ['id'],
   data: () => ({
+    ...dataUtils,
     name: '',
     summOfExpenditure: '',
-    dateOfExpenditure: '',
+    dateOfExpenditure: null,
+    dateFormatted: null,
     menu: false,
     modal: false,
   }),
+  computed: {
+    computedDateFormatted() {
+      return this.formatDate(this.dateOfExpenditure)
+    },
+  },
+
+  watch: {
+    dateOfExpenditure() {
+      this.dateFormatted = this.formatDate(this.dateOfExpenditure)
+    },
+  },
   async mounted() {
     await this.$apollo
       .query({
@@ -66,15 +81,13 @@ export default {
         fetchPolicy: 'network-only',
       })
       .then(res => {
-        this.setFields(res.data.getExpense)
+        let val = res.data.getExpense
+        this.name = val.name
+        this.summOfExpenditure = val.summOfExpenditure
+        this.dateOfExpenditure = val.dateOfExpenditure
       })
   },
   methods: {
-    setFields(val) {
-      this.name = val.name
-      this.summOfExpenditure = val.summOfExpenditure
-      this.dateOfExpenditure = val.dateOfExpenditure
-    },
     clear() {
       return this.$router.push('/expenses')
     },

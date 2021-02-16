@@ -78,16 +78,18 @@
 <script>
 import { EDITPAYMENT, GETPAYMENTBYID } from '@/graphql/Payments/querys'
 import { ALLCITIZENS } from '../graphql/Citizens/querys'
+import dataUtils from '@/utils/formatDate'
 
 export default {
   props: ['id'],
-  data: vm => ({
+  data: () => ({
+    ...dataUtils,
     year: 0,
     yearValues: [],
     quarter: '',
     quarterValues: ['1 квартал', '2 квартал', '3 квартал', '4 квартал'],
-    dateOfPayments: new Date().toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+    dateOfPayments: null,
+    dateFormatted: null,
     menu: false,
     modal: false,
     items: [],
@@ -150,18 +152,18 @@ export default {
   },
 
   methods: {
-    formatDate(date) {
-      if (!date) return null
+    // formatDate(date) {
+    //   if (!date) return null
 
-      const [year, month, day] = date.split('-')
-      return `${day}.${month}.${year}`
-    },
-    parseDate(date) {
-      if (!date) return null
+    //   const [year, month, day] = date.split('-')
+    //   return `${day}.${month}.${year}`
+    // },
+    // parseDate(date) {
+    //   if (!date) return null
 
-      const [day, month, year] = date.split('.')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    },
+    //   const [day, month, year] = date.split('.')
+    //   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    // },
     clear() {
       return this.$router.push('/payments')
     },

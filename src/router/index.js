@@ -13,6 +13,12 @@ const routes = [
     component: () => import('@/views/Home'),
   },
   {
+    path: '/buildings',
+    name: 'Builgings',
+    meta: { layout: 'main', auth: true },
+    component: () => import('@/views/Buildings'),
+  },
+  {
     path: '/payers',
     name: 'Payers',
     meta: { layout: 'main', auth: true },

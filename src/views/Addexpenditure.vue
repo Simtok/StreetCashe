@@ -17,12 +17,13 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                    v-model="dateOfExpenditure"
+                    v-model="dateFormatted"
                     label="Дата оплаты"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
                     v-on="on"
+                    @blur="dateOfExpenditure = parseDate(dateFormatted)"
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -45,15 +46,28 @@
 
 <script>
 import { ADDEXPENSE, ALLEXPENSES } from '@/graphql/Expenses/querys'
+import utilDate from '@/utils/formatDate'
 
 export default {
   data: () => ({
+    ...utilDate,
     nameOfExpenditure: '',
     dateOfExpenditure: '',
+    dateFormatted: '',
     summOfExpenditure: '',
     menu: false,
     modal: false,
   }),
+  computed: {
+    check() {
+      return this.formatDate(this.dateOfExpenditure)
+    },
+  },
+  watch: {
+    dateOfExpenditure() {
+      this.dateFormatted = this.formatDate(this.dateOfExpenditure)
+    },
+  },
 
   methods: {
     clear() {

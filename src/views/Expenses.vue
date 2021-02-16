@@ -3,18 +3,13 @@
     <v-card-title>
       <span class="font-wight-bold">Спиcок затрат по улице</span>
       <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Поиск"
-        single-line
-        hide-details
-      ></v-text-field>
+
       <v-btn text rounded small class="ml-5" @click="addnewExpenditure">
         <v-icon left>add</v-icon>Добавить расход
       </v-btn>
     </v-card-title>
-    <v-data-table :headers="headers" :items="massiv" :search="search">
+    <v-data-table :headers="headers" :items="massiv">
+      <template #item.dateOfExpenditure="{value}"> {{ formatDate(value) }} </template>
       <template #item.actions="{ item }">
         <v-icon class="mr-4" small @click="editExpenses(item.id)">mdi-pencil</v-icon>
         <DialogModal
@@ -31,13 +26,14 @@
 <script>
 import DialogModal from '../components/DialogModal'
 import { ALLEXPENSES, DELEXPENSEBYID } from '@/graphql/Expenses/querys'
+import utilDate from '@/utils/formatDate'
 
 export default {
   components: { DialogModal },
   data() {
     return {
+      ...utilDate,
       massiv: [],
-      search: '',
       headers: [
         { text: 'Цель затрат', value: 'name' },
         { text: 'Дата оплаты', value: 'dateOfExpenditure' },
@@ -67,19 +63,11 @@ export default {
       })
     },
   },
-  // async mounted() {
-  //   this.massiv = await this.$apollo
-  //     .query({
-  //       query: ALLEXPENSES,
-  //     })
-  //     .then(res => res.data.getAllExpense)
-  // },
   apollo: {
     massiv: {
       query: ALLEXPENSES,
       update(data) {
-        let result = data.getAllExpense
-        return result
+        return data.getAllExpense
       },
     },
   },

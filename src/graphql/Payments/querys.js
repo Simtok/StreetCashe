@@ -111,9 +111,13 @@ export const ADDPAYMENT = gql`
       year
       citizenId {
         id
+        name
       }
       houseId {
         id
+        homenumber
+        sity
+        street
       }
     }
   }

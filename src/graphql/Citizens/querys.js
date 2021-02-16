@@ -9,10 +9,6 @@ export const ALLCITIZENS = gql`
       name
       birthday
       phone
-      payments {
-        summ
-        dateOfPayments
-      }
       houseId {
         id
         homenumber
@@ -29,6 +25,9 @@ export const GETCITIZENBYID = gql`
       birthday
       phone
       houseId {
+        id
+      }
+      payments {
         id
       }
     }
@@ -55,6 +54,9 @@ export const ADDCITIZEN = gql`
       name
       birthday
       phone
+      houseId {
+        id
+      }
     }
   }
 `

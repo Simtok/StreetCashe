@@ -15,6 +15,9 @@
       </v-btn>
     </v-card-title>
     <v-data-table :headers="headers" :items="peoples" :search="search">
+      <template #item.dateOfPayments="{item}">
+        {{ formatDate(item.dateOfPayments) }}
+      </template>
       <template #item.actions="{ item }">
         <v-icon class="mr-4" small @click="editPayment(item.id)">mdi-pencil</v-icon>
         <DialogModal
@@ -31,39 +34,44 @@
 <script>
 import DialogModal from '@/components/DialogModal.vue'
 import { ALLPAYMENTS, DELPAYMENT } from '@/graphql/Payments/querys'
+import utilDate from '@/utils/formatDate'
 
 export default {
   components: { DialogModal },
-  data() {
-    return {
-      search: '',
-      headers: [
-        { text: 'Адрес', value: 'address' },
-        { text: 'Фамилия И.О.', value: 'name' },
-        { text: 'Период год/кв', value: 'period' },
-        { text: 'Дата', value: 'dateOfPayments' },
-        { text: 'Сумма', value: 'summ' },
-        { text: 'Операции', value: 'actions' },
-      ],
-      peoples: [],
-    }
-  },
-  async mounted() {
-    let mass = await this.$apollo.query({
+  data: () => ({
+    ...utilDate,
+    search: '',
+    headers: [
+      { text: 'Адрес', value: 'address' },
+      { text: 'Фамилия И.О.', value: 'name' },
+      { text: 'Период год/кв', value: 'period' },
+      { text: 'Дата оплаты', value: 'dateOfPayments' },
+      { text: 'Сумма', value: 'summ' },
+      { text: 'Операции', value: 'actions' },
+    ],
+    peoples: [],
+  }),
+  apollo: {
+    peoples: {
       query: ALLPAYMENTS,
-    })
-    mass.data.getAllPayments.map(el => {
-      let temp = {
-        id: el.id,
-        summ: el.summ,
-        dateOfPayments: el.dateOfPayments,
-        period: el.year.toString() + ' / ' + el.quarter.trim().substr(0, 4) + '.',
-        name: el.citizenId.name,
-        address: el.houseId.sity + ', ул. ' + el.houseId.street + ', дом. ' + el.houseId.homenumber,
-        citizenId: el.citizenId.id,
-      }
-      this.peoples.push(temp)
-    })
+      update: ({ getAllPayments }) => {
+        let mass = []
+        getAllPayments.map(el => {
+          let temp = {
+            id: el.id,
+            summ: el.summ,
+            dateOfPayments: el.dateOfPayments,
+            period: el.year.toString() + ' / ' + el.quarter.trim().substr(0, 4) + '.',
+            name: el.citizenId.name,
+            address:
+              el.houseId.sity + ', ул. ' + el.houseId.street + ', дом. ' + el.houseId.homenumber,
+            citizenId: el.citizenId.id,
+          }
+          mass.push(temp)
+        })
+        return mass
+      },
+    },
   },
   methods: {
     editPayment(val) {
@@ -84,6 +92,7 @@ export default {
           cache.writeQuery({ query: ALLPAYMENTS, data })
         },
       })
+      this.getChange()
     },
   },
 }

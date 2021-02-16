@@ -30,8 +30,7 @@
 
 <script>
 import DialogModal from '../components/DialogModal'
-import { GETCITIZENBYID, ALLCITIZENS } from '../graphql/Citizens/querys'
-// import { DELCITIZENBYID, ALLCITIZENS, GETCITIZENBYID } from '../graphql/Citizens/querys'
+import { GETCITIZENBYID, ALLCITIZENS, DELCITIZENBYID } from '../graphql/Citizens/querys'
 
 export default {
   data() {
@@ -74,30 +73,24 @@ export default {
             id: el,
           },
         })
-        .then(res =>
-          res.data.getCitizenWithPays.payments.map(el => {
-            return el.id
-          }),
-        )
-      console.log(payId)
-    },
-    //   if (payId.length > 0) {
-    //     alert('Удаление невозможно! Есть связанные данные!')
-    //     return
-    //   }
+        .then(res => res.data.getCitizen.payments)
 
-    //   this.$apollo.mutate({
-    //     mutation: DELCITIZENBYID,
-    //     variables: {
-    //       id: el,
-    //     },
-    //     update: (cache, { data: { delCitizen } }) => {
-    //       let data = cache.readQuery({ query: ALLCITIZENS })
-    //       data.getAllCitizen = data.getAllCitizen.filter(elem => elem.id != delCitizen.id)
-    //       cache.writeQuery({ query: ALLCITIZENS, data })
-    //     },
-    //   })
-    // },
+      if (payId.length > 0) {
+        alert('Удаление невозможно! Есть связанные данные!')
+        return
+      }
+      this.$apollo.mutate({
+        mutation: DELCITIZENBYID,
+        variables: {
+          id: el,
+        },
+        update: (cache, { data: { delCitizen } }) => {
+          let data = cache.readQuery({ query: ALLCITIZENS })
+          data.getAllCitizen = data.getAllCitizen.filter(elem => elem.id != delCitizen.id)
+          cache.writeQuery({ query: ALLCITIZENS, data })
+        },
+      })
+    },
   },
 
   apollo: {
