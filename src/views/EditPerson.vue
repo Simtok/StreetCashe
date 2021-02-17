@@ -76,7 +76,7 @@ export default {
   }),
   computed: {
     computedDateFormatted() {
-      return this.formatDate(this.dateOfPayments)
+      return this.formatDate(this.birthday)
     },
   },
 

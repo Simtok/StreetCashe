@@ -24,13 +24,12 @@
         </v-card></v-col
       >
 
-      <v-col cols="8" class="theme--light v-sheet" outlined>
+      <v-col cols="4" class="theme--light v-sheet" outlined>
         <v-card>
           <v-card-title>
             <span class="font-wight-bold"
-              >Сводная информация за {{ $store.getters.getYear }} год</span
+              >Сводная информация по оплате за {{ $store.getters.getYear }} год</span
             >
-            <v-spacer></v-spacer>
           </v-card-title>
           <v-data-table :headers="payHeader" :items="year_data">
             <template #item.month="{item}">
@@ -73,10 +72,9 @@ export default {
     ],
     yearsData: [],
     payHeader: [
-      { text: 'Период', value: 'month' },
+      { text: 'Период', value: 'quarter' },
       { text: 'Доход', value: 'income' },
-      { text: 'Расход', value: 'consumption' },
-      { text: 'Остаток', value: 'remains', sortable: false },
+      { text: 'Статистика', value: 'statisic' },
       { text: '', value: 'actions', sortable: false },
     ],
     year_data: [],
@@ -86,9 +84,6 @@ export default {
     showMonth(val) {
       this.$router.push(`/monthinfo/${val}`)
     },
-    // get_item() {
-    //   return 'item.remains'
-    // },
     async onClickRow(data) {
       this.year_data.length = 0
       let year = ''
@@ -118,19 +113,19 @@ export default {
         .query({
           query: ALLPAYMENTS,
         })
-        .then(res =>
-          res.data.getAllPayments.filter(
-            u => dateFilter(new Date(u.dateOfPayments), 'year') === year,
-          ),
-        )
+        .then(res => {
+          console.log(res, year)
+          return res.data.getAllPayments.filter(u => u.year.toString() === year)
+        })
 
       payments.map(v => {
-        let month = dateFilter(new Date(v.dateOfPayments), 'month')
+        let quarter = v.quarter
         let payment = +v.summ
-        if (month in paymentsByYear) paymentsByYear[month] += payment
-        else paymentsByYear[month] = payment
+        if (quarter in paymentsByYear) paymentsByYear[quarter] += payment
+        else paymentsByYear[quarter] = payment
       })
 
+      console.log(payments)
       expenses.map(v => {
         let month = dateFilter(new Date(v.dateOfExpenditure), 'month')
         let expense = +v.summOfExpenditure
@@ -138,17 +133,16 @@ export default {
         else expencesByYear[month] = expense
       })
 
-      let monthByYear = Object.keys(paymentsByYear).concat(Object.keys(expencesByYear))
-      monthByYear = [...new Set(monthByYear)].sort()
+      let monthByYear = Object.keys(paymentsByYear).sort()
+      // monthByYear = [...new Set(monthByYear)].sort()
 
       for (let i = 0; i < monthByYear.length; i++) {
-        let month = monthByYear[i]
-        let payment = paymentsByYear[month] || 0
-        let expence = expencesByYear[month] || 0
+        let quarter = monthByYear[i]
+        let payment = paymentsByYear[quarter]
+        // let expence = expencesByYear[month] || 0
         let item = {
-          month: month,
+          quarter: quarter,
           income: payment,
-          consumption: expence,
         }
         this.year_data.push(item)
       }

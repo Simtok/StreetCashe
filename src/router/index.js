@@ -97,6 +97,22 @@ const routes = [
     component: () => import('@/views/ShowMontsInfo'),
     props: true,
   },
+
+  {
+    path: '/addhouse',
+    name: 'addhouse',
+    meta: { layout: 'main', auth: true },
+    component: () => import('@/views/AddHouse'),
+  },
+
+  {
+    path: '/edithouse/:id',
+    name: 'edithouse',
+    meta: { layout: 'main', auth: true },
+    component: () => import('@/views/EditHouse'),
+    props: true,
+  },
+
   {
     path: '/test',
     name: 'test',

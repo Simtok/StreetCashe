@@ -1,7 +1,7 @@
 <template>
   <v-form>
     <v-container class="text-center"
-      ><div class="display-3">Корректировка расхода --- {{ id }}</div>
+      ><div class="display-3">Корректировка расхода</div>
       <v-row justify="center">
         <v-col cols="6">
           <v-row>

@@ -73,13 +73,13 @@ export default {
   }),
   computed: {
     computedDateFormatted() {
-      return this.formatDate(this.dateOfPayments)
+      return this.formatDate(this.birthday)
     },
   },
 
   watch: {
-    dateOfPayments() {
-      this.dateFormatted = this.formatDate(this.dateOfPayments)
+    birthday() {
+      this.dateFormatted = this.formatDate(this.birthday)
     },
   },
   async mounted() {
