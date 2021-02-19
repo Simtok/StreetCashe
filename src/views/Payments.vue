@@ -47,7 +47,7 @@ export default {
       { text: 'Период год/кв', value: 'period' },
       { text: 'Дата оплаты', value: 'dateOfPayments' },
       { text: 'Сумма', value: 'summ' },
-      { text: 'Операции', value: 'actions' },
+      { text: 'Операции', value: 'actions', sortable: false },
     ],
     peoples: [],
   }),
@@ -69,7 +69,11 @@ export default {
           }
           mass.push(temp)
         })
-        return mass
+
+        return mass.sort((prev, next) => {
+          if (prev.period < next.period) return -1
+          if (prev.period > next.period) return 1
+        })
       },
     },
   },

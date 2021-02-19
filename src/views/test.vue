@@ -1,102 +1,49 @@
 <template>
-  <v-container grid-list-md>
-    <v-layout row wrap>
-      <v-flex xs12 lg6>
-        <v-menu
-          ref="menu1"
-          v-model="menu1"
-          :close-on-content-click="false"
-          lazy
-          transition="scale-transition"
-          offset-y
-          full-width
-          max-width="290px"
-          min-width="290px"
-        >
-          <template v-slot:activator="{ on }">
-            <v-text-field
-              v-model="dateFormatted"
-              label="Date"
-              hint="MM/DD/YYYY format"
-              persistent-hint
-              prepend-icon="event"
-              @blur="date = parseDate(dateFormatted)"
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
-        </v-menu>
-        <p>
-          Date in ISO format: <strong>{{ date }}</strong>
-        </p>
-      </v-flex>
-
-      <v-flex xs12 lg6>
-        <v-menu
-          v-model="menu2"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          lazy
-          transition="scale-transition"
-          offset-y
-          max-width="290px"
-          min-width="290px"
-        >
-          <template v-slot:activator="{ on }">
-            <v-text-field
-              v-model="computedDateFormatted"
-              label="Date (read only text field)"
-              hint="MM/DD/YYYY format"
-              persistent-hint
-              prepend-icon="event"
-              readonly
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-date-picker v-model="date" no-title @input="menu2 = false"></v-date-picker>
-        </v-menu>
-        <p>
-          Date in ISO format: <strong>{{ date }}</strong>
-        </p>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <div>
+    <h2>Test</h2>
+    <ul v-for="el in massiv" :key="el.value">
+      <li>
+        {{ el }}
+        /
+        {{ el.value }}
+        --
+        {{ el.prompt }}
+      </li>
+    </ul>
+    <h1>{{ massiv['key1'].value }} - {{ massiv['key1'].prompt }}</h1>
+    <v-text-field v-model="key" label="Key"></v-text-field>
+    <v-btn @click="doIt(key)">Click</v-btn>
+  </div>
 </template>
 
 <script>
 export default {
-  data: vm => ({
-    date: new Date().toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
-    menu1: false,
-    menu2: false,
-  }),
-
-  computed: {
-    computedDateFormatted() {
-      return this.formatDate(this.date)
-    },
+  data() {
+    return {
+      key: '',
+      massiv: {
+        key1: { value: 'key 1', prompt: 'p1' },
+        key2: { value: 'key 2', prompt: 'p2' },
+        key3: { value: 'key 3', prompt: 'p3' },
+        key4: { value: 'key 4', prompt: 'p4' },
+      },
+    }
   },
-
-  watch: {
-    date() {
-      this.dateFormatted = this.formatDate(this.date)
-    },
-  },
-
   methods: {
-    formatDate(date) {
-      if (!date) return null
-
-      const [year, month, day] = date.split('-')
-      return `${day}.${month}.${year}`
-    },
-    parseDate(date) {
-      if (!date) return null
-
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    doIt(key) {
+      if (key in this.massiv) {
+        let v1 = this.massiv[key].value + 'Add more val'
+        let p1 = this.massiv[key].prompt + 'Add more prompt'
+        this.massiv[key].value = v1
+        this.massiv[key].prompt = p1
+      } else {
+        // let val = 'Add new option'
+        this.massiv[key] = { value: key + '  / value', prompt: key + '  /prompt' }
+      }
+      console.log(this.massiv)
     },
   },
 }
 </script>
+
+<style lang="scss" scoped></style>

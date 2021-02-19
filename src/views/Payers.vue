@@ -45,7 +45,7 @@ export default {
         { text: 'Адрес', value: 'address' },
         { text: 'Телефон', value: 'phone' },
         { text: 'Дата рождения', value: 'birthday' },
-        { text: 'Операции', value: 'actions' },
+        { text: 'Операции', value: 'actions', sortable: false },
       ],
     }
   },

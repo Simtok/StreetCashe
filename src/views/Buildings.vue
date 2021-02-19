@@ -42,7 +42,7 @@ export default {
       { text: 'Город', value: 'sity' },
       { text: 'Улица', value: 'street' },
       { text: 'Номер дома', value: 'homenumber' },
-      { text: 'Операции', value: 'actions' },
+      { text: 'Операции', value: 'actions', sortable: false },
     ],
   }),
   methods: {
@@ -86,7 +86,7 @@ export default {
     info: {
       query: ALLHOUSES,
       update(data) {
-        return data.getAllHouses
+        return data.getAllHouses.sort((prev, next) => prev.homenumber - next.homenumber)
       },
     },
   },

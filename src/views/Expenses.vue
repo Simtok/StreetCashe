@@ -38,7 +38,7 @@ export default {
         { text: 'Цель затрат', value: 'name' },
         { text: 'Дата оплаты', value: 'dateOfExpenditure' },
         { text: 'Сумма', value: 'summOfExpenditure' },
-        { text: 'Операции', value: 'actions' },
+        { text: 'Операции', value: 'actions', sortable: false },
       ],
     }
   },
@@ -67,7 +67,10 @@ export default {
     massiv: {
       query: ALLEXPENSES,
       update(data) {
-        return data.getAllExpense
+        return data.getAllExpense.sort((prev, next) => {
+          if (prev.dateOfExpenditure < next.dateOfExpenditure) return -1
+          if (prev.dateOfExpenditure > next.dateOfExpenditure) return 1
+        })
       },
     },
   },

@@ -46,6 +46,19 @@
           </v-data-table>
         </v-card>
       </v-col>
+
+      <v-col cols="4" class="theme--light v-sheet" outlined>
+        <v-card>
+          <v-card-title>
+            <span class="font-wight-bold"
+              >Сводная информация по расходам за {{ $store.getters.getYear }} год</span
+            >
+          </v-card-title>
+          <v-data-table :headers="expenseHeader" :items="expenseData">
+            <template #item.dateOfExpenditure="{value}"> {{ formatDate(value) }} </template>
+          </v-data-table>
+        </v-card>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -54,12 +67,15 @@
 // @ is an alias to /src
 import { ALLPAYMENTS } from '@/graphql/Payments/querys'
 import { ALLEXPENSES } from '@/graphql/Expenses/querys'
+import { ALLHOUSES } from '@/graphql/Houses/querys'
 import dateFilter from '@/filters/dateFilter'
 import mn from '@/utils/monthName'
+import utilDate from '@/utils/formatDate'
 
 export default {
   name: 'Home',
   data: () => ({
+    ...utilDate,
     monthName: mn,
     yearInfo: '',
     myStore: '',
@@ -78,12 +94,19 @@ export default {
       { text: '', value: 'actions', sortable: false },
     ],
     year_data: [],
+    expenseHeader: [
+      { text: ' Назначение расхода', value: 'name' },
+      { text: ' Дата оплаты', value: 'dateOfExpenditure' },
+      { text: ' Сумма оплаты', value: 'summOfExpenditure' },
+    ],
+    expenseData: [],
     saldo: 0,
   }),
   methods: {
     showMonth(val) {
       this.$router.push(`/monthinfo/${val}`)
     },
+
     async onClickRow(data) {
       this.year_data.length = 0
       let year = ''
@@ -96,8 +119,15 @@ export default {
         year = data
       }
 
-      let paymentsByYear = {}
-      let expencesByYear = {}
+      let paymentsByQuarter = {}
+
+      // let expencesByYear = {}
+
+      let houses = await this.$apollo
+        .query({
+          query: ALLHOUSES,
+        })
+        .then(res => res.data.getAllHouses.length)
 
       let expenses = await this.$apollo
         .query({
@@ -109,40 +139,52 @@ export default {
           ),
         )
 
+      this.expenseData = expenses.sort(
+        (prev, next) => prev.dateOfExpenditure - next.dateOfExpenditure,
+      )
+
       let payments = await this.$apollo
         .query({
           query: ALLPAYMENTS,
         })
         .then(res => {
-          console.log(res, year)
           return res.data.getAllPayments.filter(u => u.year.toString() === year)
         })
 
       payments.map(v => {
         let quarter = v.quarter
-        let payment = +v.summ
-        if (quarter in paymentsByYear) paymentsByYear[quarter] += payment
-        else paymentsByYear[quarter] = payment
+        let pay = +v.summ
+        let houseId = v.houseId.id
+        if (quarter in paymentsByQuarter) {
+          paymentsByQuarter[quarter].payment += pay
+          paymentsByQuarter[quarter].houseId.push(houseId)
+        } else {
+          paymentsByQuarter[quarter] = {
+            payment: pay,
+            houseId: [houseId],
+          }
+        }
       })
 
-      console.log(payments)
-      expenses.map(v => {
-        let month = dateFilter(new Date(v.dateOfExpenditure), 'month')
-        let expense = +v.summOfExpenditure
-        if (month in expencesByYear) expencesByYear[month] += expense
-        else expencesByYear[month] = expense
-      })
+      // expenses.map(v => {
+      //   let month = dateFilter(new Date(v.dateOfExpenditure), 'month')
+      //   let expense = +v.summOfExpenditure
+      //   if (month in expencesByYear) expencesByYear[month] += expense
+      //   else expencesByYear[month] = expense
+      // })
 
-      let monthByYear = Object.keys(paymentsByYear).sort()
-      // monthByYear = [...new Set(monthByYear)].sort()
+      let quarters = Object.keys(paymentsByQuarter).sort()
+      // quarters = [...new Set(quarters)].sort()
 
-      for (let i = 0; i < monthByYear.length; i++) {
-        let quarter = monthByYear[i]
-        let payment = paymentsByYear[quarter]
-        // let expence = expencesByYear[month] || 0
+      for (let i = 0; i < quarters.length; i++) {
+        let quarter = quarters[i]
+        let payment = paymentsByQuarter[quarter].payment
+        let countHouses = [...new Set(paymentsByQuarter[quarter].houseId)].length
+        let statisic = houses + ' / ' + countHouses
         let item = {
           quarter: quarter,
           income: payment,
+          statisic: statisic,
         }
         this.year_data.push(item)
       }
