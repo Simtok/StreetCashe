@@ -32,16 +32,8 @@
             >
           </v-card-title>
           <v-data-table :headers="payHeader" :items="year_data">
-            <template #item.month="{item}">
-              {{ monthName[item.month] }}
-            </template>
-            <template #item.remains="{ item }">
-              <span :class="item.income > item.consumption ? 'norm' : 'problem'">
-                {{ (item.income - item.consumption).toFixed(2) }}
-              </span>
-            </template>
             <template #item.actions="{ item }">
-              <v-icon class="mr-2" small @click="showMonth(item.month)">mdi-pencil</v-icon>
+              <v-icon class="mr-2" small @click="showQuarter(item.quarter)">mdi-pencil</v-icon>
             </template>
           </v-data-table>
         </v-card>
@@ -103,7 +95,7 @@ export default {
     saldo: 0,
   }),
   methods: {
-    showMonth(val) {
+    showQuarter(val) {
       this.$router.push(`/monthinfo/${val}`)
     },
 
@@ -118,10 +110,6 @@ export default {
       } else {
         year = data
       }
-
-      let paymentsByQuarter = {}
-
-      // let expencesByYear = {}
 
       let houses = await this.$apollo
         .query({
@@ -143,6 +131,15 @@ export default {
         (prev, next) => prev.dateOfExpenditure - next.dateOfExpenditure,
       )
 
+      // expenses.map(v => {
+      //   let month = dateFilter(new Date(v.dateOfExpenditure), 'month')
+      //   let expense = +v.summOfExpenditure
+      //   if (month in expencesByYear) expencesByYear[month] += expense
+      //   else expencesByYear[month] = expense
+      // })
+
+      let paymentsByQuarter = {}
+
       let payments = await this.$apollo
         .query({
           query: ALLPAYMENTS,
@@ -151,44 +148,38 @@ export default {
           return res.data.getAllPayments.filter(u => u.year.toString() === year)
         })
 
-      payments.map(v => {
-        let quarter = v.quarter
-        let pay = +v.summ
-        let houseId = v.houseId.id
-        if (quarter in paymentsByQuarter) {
-          paymentsByQuarter[quarter].payment += pay
-          paymentsByQuarter[quarter].houseId.push(houseId)
-        } else {
-          paymentsByQuarter[quarter] = {
-            payment: pay,
-            houseId: [houseId],
+      if (payments.length > 0) {
+        payments.map(v => {
+          let quarter = v.quarter
+          let pay = +v.summ
+          let houseId = v.houseId.id
+          if (quarter in paymentsByQuarter) {
+            paymentsByQuarter[quarter].payment += pay
+            paymentsByQuarter[quarter].houseId.push(houseId)
+          } else {
+            paymentsByQuarter[quarter] = {
+              payment: pay,
+              houseId: [houseId],
+            }
           }
+        })
+
+        let quarters = Object.keys(paymentsByQuarter).sort()
+        // quarters = [...new Set(quarters)].sort()
+
+        for (let i = 0; i < quarters.length; i++) {
+          let quarter = quarters[i]
+          let payment = paymentsByQuarter[quarter].payment
+          let countHouses = [...new Set(paymentsByQuarter[quarter].houseId)].length
+          let statisic = houses + ' / ' + countHouses
+          let item = {
+            quarter: quarter,
+            income: payment,
+            statisic: statisic,
+          }
+          this.year_data.push(item)
         }
-      })
-
-      // expenses.map(v => {
-      //   let month = dateFilter(new Date(v.dateOfExpenditure), 'month')
-      //   let expense = +v.summOfExpenditure
-      //   if (month in expencesByYear) expencesByYear[month] += expense
-      //   else expencesByYear[month] = expense
-      // })
-
-      let quarters = Object.keys(paymentsByQuarter).sort()
-      // quarters = [...new Set(quarters)].sort()
-
-      for (let i = 0; i < quarters.length; i++) {
-        let quarter = quarters[i]
-        let payment = paymentsByQuarter[quarter].payment
-        let countHouses = [...new Set(paymentsByQuarter[quarter].houseId)].length
-        let statisic = houses + ' / ' + countHouses
-        let item = {
-          quarter: quarter,
-          income: payment,
-          statisic: statisic,
-        }
-        this.year_data.push(item)
-      }
-
+      } else this.year_data = []
       this.$store.dispatch('set_year', year)
     },
   },
@@ -209,7 +200,7 @@ export default {
     let paymentsByYears = {}
 
     payments.map(v => {
-      let year = dateFilter(new Date(v.dateOfPayments), 'year')
+      let year = v.year.toString()
       let payment = +v.summ
       if (year in paymentsByYears) paymentsByYears[year] += payment
       else paymentsByYears[year] = payment
