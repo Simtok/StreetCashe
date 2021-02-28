@@ -91,7 +91,7 @@ const routes = [
   },
 
   {
-    path: '/monthinfo/:month',
+    path: '/monthinfo/:quarter',
     name: 'monthinfo',
     meta: { layout: 'main', auth: true },
     component: () => import('@/views/ShowMontsInfo'),

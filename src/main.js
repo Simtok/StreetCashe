@@ -16,6 +16,11 @@ const apolloProvider = new VueApollo({
     uri: 'http://localhost:4001/graphql',
     cache,
   }),
+  defaultOptions: {
+    $query: {
+      fetchPolicy: 'network-only',
+    },
+  },
 })
 
 Vue.filter('dateFilter', DateFilter)

@@ -9,6 +9,9 @@ export const ALLHOUSES = gql`
       homenumber
       street
       sity
+      citizens {
+        id
+      }
     }
   }
 `

@@ -24,7 +24,7 @@
         </v-card></v-col
       >
 
-      <v-col cols="4" class="theme--light v-sheet" outlined>
+      <v-col cols="3" class="theme--light v-sheet" outlined>
         <v-card>
           <v-card-title>
             <span class="font-wight-bold"
@@ -39,7 +39,7 @@
         </v-card>
       </v-col>
 
-      <v-col cols="4" class="theme--light v-sheet" outlined>
+      <v-col cols="5" class="theme--light v-sheet" outlined>
         <v-card>
           <v-card-title>
             <span class="font-wight-bold"
@@ -115,7 +115,11 @@ export default {
         .query({
           query: ALLHOUSES,
         })
-        .then(res => res.data.getAllHouses.length)
+        .then(res => {
+          let temp = res.data.getAllHouses.filter(u => u.citizens.length > 0)
+
+          return temp.length
+        })
 
       let expenses = await this.$apollo
         .query({
