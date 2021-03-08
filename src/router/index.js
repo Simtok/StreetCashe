@@ -91,10 +91,10 @@ const routes = [
   },
 
   {
-    path: '/monthinfo/:quarter',
-    name: 'monthinfo',
+    path: '/quarterinfo/:quarter',
+    name: 'quarterinfo',
     meta: { layout: 'main', auth: true },
-    component: () => import('@/views/ShowMontsInfo'),
+    component: () => import('@/views/ShowQuartersInfo'),
     props: true,
   },
 

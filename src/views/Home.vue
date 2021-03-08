@@ -96,7 +96,7 @@ export default {
   }),
   methods: {
     showQuarter(val) {
-      this.$router.push(`/monthinfo/${val}`)
+      this.$router.push(`/quarterinfo/${val}`)
     },
 
     async onClickRow(data) {
@@ -175,7 +175,7 @@ export default {
           let quarter = quarters[i]
           let payment = paymentsByQuarter[quarter].payment
           let countHouses = [...new Set(paymentsByQuarter[quarter].houseId)].length
-          let statisic = houses + ' / ' + countHouses
+          let statisic = countHouses + ' / ' + houses
           let item = {
             quarter: quarter,
             income: payment,
@@ -242,34 +242,6 @@ export default {
 
     this.onClickRow(this.$store.getters.getYear)
   },
-  computed: {
-    // mixData() {
-    //   return this.dataList
-    // },
-  },
-
-  // apollo: {
-  //   payers: {
-  //     query: ALLCITIZENS,
-  //     update(data) {
-  //       return data.getAllCitizen
-  //     },
-  //   },
-
-  //   expenses: {
-  //     query: ALLEXPENSES,
-  //     update(data) {
-  //       return data.getAllExpense
-  //     },
-  //   },
-
-  //   payments: {
-  //     query: ALLPAYMENTS,
-  //     update(data) {
-  //       return data.getAllPayments
-  //     },
-  //   },
-  // },
 }
 </script>
 
