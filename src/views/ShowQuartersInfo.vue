@@ -86,12 +86,6 @@ export default {
       }
     })
 
-    //   things.thing = things.thing.filter((thing, index, self) =>
-    //        index === self.findIndex((t) => (
-    //           t.place === thing.place && t.name === thing.name
-    // ))
-    //   )
-
     this.noPaymentData = citizens.data.getAllCitizen
       .filter(u => !payers.includes(u.houseId.id))
       .filter((item, index, arr) => index === arr.findIndex(t => t.houseId.id === item.houseId.id))
